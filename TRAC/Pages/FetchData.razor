@@ -1,7 +1,9 @@
 ﻿@page "/fetchdata"
 
 @using TRAC.Data
+@using Microsoft.Extensions.Logging
 @inject WeatherForecastService ForecastService
+@inject ILogger<FetchData> _logger;
 
 <h1>Weather forecast</h1>
 
@@ -38,9 +40,10 @@ else
 
 @code {
     private WeatherForecast[] forecasts;
-
+    
     protected override async Task OnInitializedAsync()
     {
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        _logger.LogInformation(string.Join(", ", forecasts.Select(a => a.Summary)));
     }
 }

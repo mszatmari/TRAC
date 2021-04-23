@@ -21,6 +21,11 @@ namespace TRAC
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureLogging(builder =>
+                {
+                    builder.ClearProviders();
+                    builder.AddLog4Net().AddConsole();
                 });
     }
 }
