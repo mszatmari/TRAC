@@ -4,6 +4,7 @@
 @using Microsoft.Extensions.Logging
 @inject WeatherForecastService ForecastService
 @inject ILogger<FetchData> _logger;
+@attribute [Authorize]
 
 <h1>Weather forecast</h1>
 

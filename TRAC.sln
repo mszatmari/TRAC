@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRAC.Business", "TRAC.Busin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRAC.DataAccess", "TRAC.DataAccess\TRAC.DataAccess.csproj", "{E98ED613-16E8-4544-9014-38B72A34A9CB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TRAC.API", "TRAC.API\TRAC.API.csproj", "{2980743D-F6D5-43B4-8088-893F743526A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{E98ED613-16E8-4544-9014-38B72A34A9CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E98ED613-16E8-4544-9014-38B72A34A9CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E98ED613-16E8-4544-9014-38B72A34A9CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2980743D-F6D5-43B4-8088-893F743526A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2980743D-F6D5-43B4-8088-893F743526A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2980743D-F6D5-43B4-8088-893F743526A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2980743D-F6D5-43B4-8088-893F743526A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
