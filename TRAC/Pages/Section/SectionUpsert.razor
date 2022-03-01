@@ -1,0 +1,97 @@
+﻿@using TRAC.Model
+
+<Card>
+    <CardHeader>
+        <Validation Validator="@ValidateSectionName">
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is2.OnDesktop.Is12.OnMobile">Section @Section.SectionOrder <Button Size="Size.Small" Color="Color.Danger" Outline="true" Type="ButtonType.Button" @onclick="()=>RemoveAction(Section)"><Icon Name="IconName.Delete" /></Button> </FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10.OnDesktop.Is12.OnMobile">
+                    <TextEdit @bind-Text="Section.Name" Placeholder="Name of the Section">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </TextEdit>
+                </FieldBody>
+            </Field>
+        </Validation>
+    </CardHeader>
+    <CardBody>
+        @foreach (QuestionDefinitionDTO questionDefinition in Section.QuestionDefinitions.OrderBy(a => a.QuestionOrder))
+        {
+            <TRAC.Pages.QuestionDefinition.QuestionDefinitionUpsert RemoveAction="RemoveQuestion" QuestionDefinition="questionDefinition" />
+        }
+    <Row>
+        <Column ColumnSize="ColumnSize.Is12" Class="pt-3">
+            <Button Type="ButtonType.Button" @onclick="AddNewQuestion" Float="Float.Right" Outline="true" Color="Color.Primary">
+                <Icon Name="IconName.Add" /> Add new question
+            </Button>
+        </Column>
+       
+    </Row>
+       
+    </CardBody>
+</Card>
+
+
+
+@code {
+
+    [Parameter]
+    public SectionDefinitionDTO Section { get; set; } = new SectionDefinitionDTO();
+    [Parameter]
+    public Action<SectionDefinitionDTO> RemoveAction { get; set; }
+
+    void ValidateSectionName(ValidatorEventArgs e)
+    {
+        var title = Convert.ToString(e.Value);
+        if (string.IsNullOrEmpty(title))
+        {
+            e.ErrorText = "Name is required";
+            e.Status = ValidationStatus.Error;
+        }
+        else
+        {
+            e.Status = ValidationStatus.Success;
+        }
+    }
+
+    private void AddNewQuestion()
+    {
+
+        QuestionDefinitionDTO questionDefinition = new QuestionDefinitionDTO()
+        {
+            SectionDefinition = Section,
+            SectionDefinitionId = Section.Id,
+            QuestionOrder = Section.QuestionDefinitions.Count() + 1,
+            IsAlwaysDisplayed = true
+        };
+
+        AnswerDefinitionDTO answerDefinition = new AnswerDefinitionDTO();
+        answerDefinition.Label = "Yes";
+        answerDefinition.QuestionDefinition = questionDefinition;
+        answerDefinition.QuestionDefinitionId = questionDefinition.Id;
+
+        AnswerDefinitionDTO answerDefinition1 = new AnswerDefinitionDTO();
+        answerDefinition1.Label = "No";
+        answerDefinition1.QuestionDefinition = questionDefinition;
+        answerDefinition1.QuestionDefinitionId = questionDefinition.Id;
+
+
+        questionDefinition.AnswerDefinitions.AddRange(new List<AnswerDefinitionDTO> {answerDefinition, answerDefinition1 });
+
+        Section.QuestionDefinitions.Add(questionDefinition) ;
+    }
+
+    private void RemoveQuestion(QuestionDefinitionDTO question)
+    {
+        int order = question.QuestionOrder;
+        List<QuestionDefinitionDTO> questions = Section.QuestionDefinitions.Where(a => a.QuestionOrder > order).ToList();
+
+        for(int i =0; i<questions.Count(); i++)
+        {
+            questions[i].QuestionOrder--;
+        }
+        Section.QuestionDefinitions.Remove(question);
+        StateHasChanged();
+    }
+}

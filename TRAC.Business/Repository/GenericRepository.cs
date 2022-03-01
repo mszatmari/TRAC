@@ -38,7 +38,7 @@ namespace TRAC.Business.Repository
                 var query = await ent.ToListAsync();
                 if (query.Count > 0)
                 {
-                    returnValues.AddRange(MapToDtoList<TM, TD>(query));
+                    returnValues.AddRange(_mapper.Map<IEnumerable<TM>, IEnumerable<TD>>(query));
                 }
             }
             catch(Exception e)
@@ -63,7 +63,7 @@ namespace TRAC.Business.Repository
 
                 if (query.Count > 0)
                 {
-                    returnValues.AddRange(MapToDtoList<TM, TD>(query));
+                    returnValues.AddRange(_mapper.Map<IEnumerable<TM>,IEnumerable<TD>>(query));
                 }
             }
             catch (Exception e)
@@ -134,7 +134,7 @@ namespace TRAC.Business.Repository
             return await _context.SaveChangesAsync();
         }
 
-        public IQueryable<TM> List(Expression<Func<TM, bool>> filter = null, Func<IQueryable<TM>,
+        public async Task<IEnumerable<TD>> List(Expression<Func<TM, bool>> filter = null, Func<IQueryable<TM>,
             IOrderedQueryable<TM>> orderBy = null, List<Expression<Func<TM, object>>> includeProperties = null,
         int? page = null, int? pageSize = null)
         {
@@ -155,11 +155,12 @@ namespace TRAC.Business.Repository
                 query = query
                     .Skip(page.Value)
                     .Take(pageSize.Value);
-
-            return query;
+            var q = await query.ToListAsync();
+            var item = _mapper.Map<IEnumerable<TM>, IEnumerable<TD>>(q);
+            return item;
         }
 
-        public IQueryable<TM> List(Expression<Func<TM, bool>> filter = null, string orderBy = null, string ascendingDescending = "ASC",
+        public async Task<IEnumerable<TD>> List(Expression<Func<TM, bool>> filter = null, string orderBy = null, string ascendingDescending = "ASC",
             List<Expression<Func<TM, object>>> includeProperties = null,
        int? page = null, int? pageSize = null)
         {
@@ -176,11 +177,12 @@ namespace TRAC.Business.Repository
                     .OrderBy(orderBy ?? "Id", ascendingDescending == "ASC")
                     .Skip(page.Value)
                     .Take(pageSize.Value);
-
-            return query;
+            var q = await query.ToListAsync();
+            var item = _mapper.Map<IEnumerable<TM>, IEnumerable<TD>>(q);
+            return item;
         }
 
-        public Tuple<IQueryable<TM>, int> ListWithPaging(Expression<Func<TM, bool>> filter = null, Func<IQueryable<TM>,
+        public async Task< Tuple<IEnumerable<TD>, int>> ListWithPaging(Expression<Func<TM, bool>> filter = null, Func<IQueryable<TM>,
             IOrderedQueryable<TM>> orderBy = null, List<Expression<Func<TM, object>>> includeProperties = null,
         int? page = null, int? pageSize = null)
         {
@@ -201,11 +203,13 @@ namespace TRAC.Business.Repository
                 query = query
                     .Skip(page.Value)
                     .Take(pageSize.Value);
-
-            return new Tuple<IQueryable<TM>, int>(query, count);
+                
+            var q = await query.ToListAsync();
+            var item = _mapper.Map<IEnumerable<TM>, IEnumerable<TD>>( q);
+            return  new Tuple<IEnumerable<TD>, int>(item, count);
         }
 
-        public Tuple<IQueryable<TM>, int> ListWithPaging(Expression<Func<TM, bool>> filter = null, string orderBy = null, string ascendingDescending = "ASC",
+        public async Task< Tuple<IEnumerable<TD>, int>> ListWithPaging(Expression<Func<TM, bool>> filter = null, string orderBy = null, string ascendingDescending = "ASC",
            List<Expression<Func<TM, object>>> includeProperties = null,
       int? page = null, int? pageSize = null)
         {
@@ -224,11 +228,12 @@ namespace TRAC.Business.Repository
                     .OrderBy(orderBy ?? "Id", ascendingDescending == "ASC")
                     .Skip(page.Value)
                     .Take(pageSize.Value);
-
-            return new Tuple<IQueryable<TM>, int>(query, count);
+            var q = await query.ToListAsync();
+            var item = _mapper.Map<IEnumerable<TM>, IEnumerable<TD>>(q);
+            return new Tuple<IEnumerable<TD>, int>(item, count);
         }
 
-        public IQueryable<TD> ToDtoListPaging(IQueryable<TD> list, string orderBy = null, string ascendingDescending = "ASC", int? page = null, int? pageSize = null)
+        public async Task<IEnumerable<TD>> ToDtoListPaging(IQueryable<TD> list, string orderBy = null, string ascendingDescending = "ASC", int? page = null, int? pageSize = null)
         {
             IQueryable<TD> query = list;
 
@@ -238,22 +243,9 @@ namespace TRAC.Business.Repository
                     .Skip(page.Value)
                     .Take(pageSize.Value);
 
-            return query;
+            return await query.ToListAsync();
         }
 
-        public virtual IEnumerable<TDto> MapToDtoList<TEntity, TDto>(IEnumerable<TEntity> entity)
-            where TEntity : class
-            where TDto : class
-        {
-
-            return _mapper.Map<IEnumerable<TEntity>, IEnumerable<TDto>>(entity);
-        }
-
-        public virtual IEnumerable<TEntity> MapToEntityList<TDto, TEntity>(IEnumerable<TDto> dto)
-            where TDto : class
-            where TEntity : class
-        {
-            return _mapper.Map<IEnumerable<TDto>, IEnumerable<TEntity>>(dto);
-        }
+       
     }
 }

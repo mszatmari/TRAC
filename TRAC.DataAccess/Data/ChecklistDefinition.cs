@@ -10,7 +10,7 @@ namespace TRAC.DataAccess.Data
         public string Title { get; set; }
         public int? ChecklistDefinitionStatusId { get; set; }
 
-        [ForeignKey("ChecklistDefinitionId")]
+        [ForeignKey("ChecklistDefinitionStatusId")]
         public virtual ChecklistDefinitionStatus ChecklistDefinitionStatus { get; set; }
 
         public virtual List<SectionDefinition> Sectiondefinitions { get; set; }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TRAC.DataAccess.Data;
 
 namespace TRAC.DataAccess.Migrations
 {
     [DbContext(typeof(TRACContext))]
-    partial class TRACContextModelSnapshot : ModelSnapshot
+    [Migration("20210626162405_ChangeInvolveTax")]
+    partial class ChangeInvolveTax
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

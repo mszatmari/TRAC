@@ -1,22 +1,11 @@
-﻿@inherits LayoutComponentBase
+﻿@page "/Unauthorized"
+
 @inject NavigationManager NavigationManager
+<h3>Unauthorized</h3>
 
-<Layout Sider="true">
-    <LayoutSider>
-        <LayoutSiderContent>
-            <Sider />
-        </LayoutSiderContent>
-    </LayoutSider>
-    <Layout>
-        <LayoutContent Padding="Padding.Is2.OnY.Is4.OnX"> 
-            @Body
-        </LayoutContent>
-    </Layout>
-</Layout>
+@code {
 
-
-@code{
-
+  
     [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
 
     protected async override Task OnInitializedAsync()

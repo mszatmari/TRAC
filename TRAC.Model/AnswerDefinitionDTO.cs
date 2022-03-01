@@ -12,7 +12,7 @@ namespace TRAC.Model
         public int Id { get; set; }
         public string Label { get; set; }
         public int QuestionDefinitionId { get; set; }
-        public int InvolveTax { get; set; }
+        public bool InvolveTax { get; set; }
 
         public virtual QuestionDefinitionDTO QuestionDefinition { get; set; }
         public virtual List<QuestionDisplayConditionDTO> QuestionDisplayConditions { get; set; }

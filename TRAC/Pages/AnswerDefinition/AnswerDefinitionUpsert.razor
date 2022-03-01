@@ -1,0 +1,39 @@
+﻿@using TRAC.Model
+
+
+<Validation Validator="@ValidateAnswerDefinitionLabel">
+    <Addons >
+        <Addon AddonType="AddonType.Body">
+            <TextEdit @bind-Text="AnswerDefinition.Label" Placeholder="Answer label"></TextEdit>
+        </Addon>
+        <Addon AddonType="AddonType.End">
+            <Button Size="Size.Small" Outline="true" Color="Color.Danger" @onclick="() => RemoveAction(AnswerDefinition)"><Icon Name="IconName.Delete" /></Button>
+        </Addon>
+        <ValidationError />
+        <ValidationSuccess><br /></ValidationSuccess>
+    </Addons>
+     <Switch Size="Size.Small"  TValue="bool" @bind-Checked="AnswerDefinition.InvolveTax">Involve tax?</Switch>
+               
+</Validation>
+@code {
+    [Parameter]
+    public AnswerDefinitionDTO AnswerDefinition { get; set; } = new AnswerDefinitionDTO();
+
+
+    [Parameter]
+    public Action<AnswerDefinitionDTO> RemoveAction { get; set; }
+
+    void ValidateAnswerDefinitionLabel(ValidatorEventArgs e)
+    {
+        var title = Convert.ToString(e.Value);
+        if (string.IsNullOrEmpty(AnswerDefinition.Label))
+        {
+            e.ErrorText = "Label is required";
+            e.Status = ValidationStatus.Error;
+        }
+        else
+        {
+            e.Status = ValidationStatus.Success;
+        }
+    }
+}

@@ -1,0 +1,143 @@
+﻿@page "/admin-checklist/create"
+@using TRAC.Business.Repository.IRepository
+@using TRAC.Model
+@inject IChecklistDefinitionRepository ChecklistDefinitionRepository
+@inject IChecklistDefinitionStatusRepository ChecklistDefinitionStatusRepository
+@inject NavigationManager NavigationManager
+
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Heading Alignment="TextAlignment.Left" Size="HeadingSize.Is1">@Title Checklist</Heading>
+    </Column>
+</Row>
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <EditForm Model="@ChecklistDefinition" OnSubmit=@FormSubmitted>
+            <Validations @ref="validations" Mode="ValidationMode.Manual">
+                <Card>
+                    <CardHeader Display="Display.Block">
+                        <Validation Validator="@ValidateTitle">
+                            <Field ColumnSize="ColumnSize.Is8.OnDesktop" Float="Float.Left">
+
+                                <TextEdit Size="Size.Large" @bind-Text="ChecklistDefinition.Title" Placeholder="Name of the checklist">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
+                        <Validation Validator="@ValidateStatus">
+                            <Field ColumnSize="ColumnSize.Is4.OnDesktop" Float="Float.Left">
+                                <Select TValue="int?" @bind-SelectedValue="ChecklistDefinition.ChecklistDefinitionStatusId">
+                                    <ChildContent>
+                                        <SelectItem Value="0">Please choose a status</SelectItem>
+                                        @foreach (ChecklistDefinitionStatusDTO status in ChecklistDefinitionStatuses)
+                                        {
+                                            <SelectItem Value="@status.Id">@status.Label</SelectItem>
+                                        }
+                                    </ChildContent>
+                                    <Feedback>
+                                        <ValidationError>Please select a status</ValidationError>
+                                    </Feedback>
+                                </Select>
+                            </Field>
+                        </Validation>
+                    </CardHeader>
+                    <CardBody>
+
+                        @foreach (SectionDefinitionDTO SectionDefinition in ChecklistDefinition.Sectiondefinitions.OrderBy(a => a.SectionOrder))
+                        {
+                            <TRAC.Pages.Section.SectionUpsert  RemoveAction="RemoveSection" Section="SectionDefinition" />
+                        }
+                        <Row>
+                            <Column ColumnSize="ColumnSize.Is12" Class="pt-3">
+                                <Button Type="ButtonType.Button" @onclick="@AddNewSection" Float="Float.Right" Outline="true" Color="Color.Primary">
+                                    <Icon Name="IconName.Add" /> Add new section
+                                </Button>
+                            </Column>
+
+                        </Row>
+                    </CardBody>
+                </Card>
+                <Button Color="Color.Success" Float="Float.Right" Type="ButtonType.Submit" Class="mt-3">Save changes</Button>
+            </Validations>
+        </EditForm>
+    </Column>
+</Row>
+
+@code
+{
+    ChecklistDefinitionDTO ChecklistDefinition { get; set; } = new ChecklistDefinitionDTO();
+
+
+    private string Title { get; set; } = "Create";
+    IEnumerable<ChecklistDefinitionStatusDTO> ChecklistDefinitionStatuses { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ChecklistDefinitionStatuses = await ChecklistDefinitionStatusRepository.GetAll();
+    }
+
+    private void AddNewSection()
+    {
+        ChecklistDefinition.Sectiondefinitions.Add(new SectionDefinitionDTO()
+        {
+            ChecklistDefinitionId = ChecklistDefinition.Id,
+            ChecklistDefinition = ChecklistDefinition,
+            SectionOrder = ChecklistDefinition.Sectiondefinitions.Count()+1
+        });
+
+    }
+    private void RemoveSection(SectionDefinitionDTO section)
+    {
+        int order = section.SectionOrder;
+        List<SectionDefinitionDTO> sections = ChecklistDefinition.Sectiondefinitions.Where(a => a.SectionOrder > order).ToList();
+
+        for (int i = 0; i < sections.Count(); i++)
+        {
+            sections[i].SectionOrder--;
+        }
+        ChecklistDefinition.Sectiondefinitions.Remove(section);
+        StateHasChanged();
+    }
+
+    private void FormSubmitted(EditContext editContext)
+    {
+        bool formIsValid = validations.ValidateAll();
+        if (formIsValid)
+        {
+
+        }
+    }
+
+    #region validation
+
+    Validations validations;
+
+    void ValidateTitle(ValidatorEventArgs e)
+    {
+        var title = Convert.ToString(e.Value);
+        if (string.IsNullOrEmpty(title))
+        {
+            e.ErrorText = "Name is required";
+            e.Status = ValidationStatus.Error;
+        }
+
+        else if (ChecklistDefinitionRepository.Any(a => a.Title == title).GetAwaiter().GetResult() ?? false)
+        {
+            e.ErrorText = "Checklist already exist";
+            e.Status = ValidationStatus.Error;
+        }
+        else
+        {
+            e.Status = ValidationStatus.Success;
+        }
+    }
+    void ValidateStatus(ValidatorEventArgs e)
+    {
+        var status = Convert.ToInt32(e.Value);
+        e.Status = status != 0 ? ValidationStatus.Success : ValidationStatus.Error;
+    }
+    #endregion
+}

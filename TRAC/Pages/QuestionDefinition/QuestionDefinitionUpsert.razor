@@ -1,0 +1,66 @@
+﻿@using TRAC.Model
+<Card>
+    <CardBody>
+        <Validation Validator="@ValidateQuestionDefinitionTitle">
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is2">
+                    Question @QuestionDefinition.QuestionOrder <Button Size="Size.Small" Outline="true" Color="Color.Danger" Type="ButtonType.Button" @onclick="()=>RemoveAction(QuestionDefinition)"><Icon Name="IconName.Delete"/></Button>  <br />
+                    <Switch Size="Size.Small" Style="font-size:12px" TValue="bool" @bind-Checked="QuestionDefinition.IsAlwaysDisplayed">Always displayed?</Switch>
+                </FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <MemoEdit @bind-Text="QuestionDefinition.Title" Placeholder="Name of the Section" Rows="2">
+                        <Feedback>
+                            <ValidationError />
+                        </Feedback>
+                    </MemoEdit>
+                </FieldBody>
+            </Field>
+        </Validation>
+        <Row>
+            <Column ColumnSize="ColumnSize.Is2">
+                Answers
+                <Button @onclick="() => QuestionDefinition.AnswerDefinitions.Add(new AnswerDefinitionDTO())" Color="Color.Primary" Outline="true" Size="Size.ExtraSmall" Type="ButtonType.Button">
+                    <Icon Name="IconName.Add" />
+
+                </Button> </Column>
+            <Column ColumnSize="ColumnSize.Is10" Display="Display.InlineFlex">
+                @foreach (AnswerDefinitionDTO answerDefinition in QuestionDefinition.AnswerDefinitions)
+                {
+                    <Column ColumnSize="ColumnSize.Is3" Display="Display.InlineFlex" >
+                        <Row Class="pr-3">
+                            <TRAC.Pages.AnswerDefinition.AnswerDefinitionUpsert RemoveAction="RemoveAnswer" AnswerDefinition="answerDefinition"/>
+                        </Row>
+                    </Column>
+                }
+            </Column>
+        </Row>
+    </CardBody>
+</Card>
+
+
+@code {
+    [Parameter]
+    public QuestionDefinitionDTO QuestionDefinition { get; set; } = new QuestionDefinitionDTO();
+    [Parameter]
+    public Action<QuestionDefinitionDTO> RemoveAction { get; set; }
+
+    private void RemoveAnswer(AnswerDefinitionDTO answerDefinition)
+    {
+        QuestionDefinition.AnswerDefinitions.Remove(answerDefinition);
+        StateHasChanged();
+    }
+
+    void ValidateQuestionDefinitionTitle(ValidatorEventArgs e)
+    {
+        var title = Convert.ToString(e.Value);
+        if (string.IsNullOrEmpty(title))
+        {
+            e.ErrorText = "Name is required";
+            e.Status = ValidationStatus.Error;
+        }
+        else
+        {
+            e.Status = ValidationStatus.Success;
+        }
+    }
+}

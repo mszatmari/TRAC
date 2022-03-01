@@ -1,0 +1,60 @@
+﻿
+<Bar CollapseMode="BarCollapseMode.Small" Mode="BarMode.VerticalInline" @bind-Visible="@topbarVisible" Breakpoint="Breakpoint.Desktop" Background="Background.Dark" ThemeContrast="ThemeContrast.Dark">
+    <BarBrand>
+        <BarItem>
+            <BarLink To="" Style="color:white">
+                <BarIcon IconName="customIcon" />
+                TRAC
+            </BarLink>
+        </BarItem>
+    </BarBrand>
+    <BarToggler />
+    <BarMenu>
+        <BarStart>
+            <AuthorizeView>
+                <Authorized>
+                    <BarItem>
+                        <BarDropdown>
+                            <BarDropdownToggle>
+                                <BarIcon IconName="IconName.Edit" />
+                                Administration
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem To="/admin-checklist">Checklist defintion</BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                </Authorized>
+            </AuthorizeView>
+        </BarStart>
+        <BarEnd>
+            <AuthorizeView>
+                <Authorized>
+                    <BarItem>
+                        <BarDropdown>
+                            <BarDropdownToggle>
+                                <Icon Name="IconName.User" />
+                                @context.User.Identity.Name
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem To="Identity/Account/Logout">Logout</BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                </Authorized>
+                <NotAuthorized>
+                    <BarLink To="login">
+                        <Icon Name="IconName.User" />
+                        Login
+                    </BarLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
+
+@code{
+    RenderFragment customIcon =@<img src="/Images/deloitte.gif" style="width:32px; height: 32px" />;
+private bool topbarVisible = true;
+}

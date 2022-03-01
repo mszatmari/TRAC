@@ -1,23 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using TRAC.Data;
-using TRAC.DataAccess.Data;
-using TRAC.Services;
-using TRAC.Services.IServices;
 using TRAC.Business.Repository;
 using TRAC.Business.Repository.IRepository;
+using TRAC.DataAccess.Data;
+using TRAC.IdentityUtils;
+using TRAC.Services;
+using TRAC.Services.IServices;
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 
 namespace TRAC
 {
@@ -34,11 +31,18 @@ namespace TRAC
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services
+                .AddBlazorise(options =>
+                {
+                    options.ChangeTextOnKeyPress = true; // optional
+                })
+                .AddBootstrapProviders()
+                .AddFontAwesomeIcons();
+
             services.AddDbContext<TRACContext>(options => options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IAnswerDefinitionRepository, AnswerDefinitionRepository>();
             services.AddScoped<IAnswerRepository, AnswerReporitory>();
@@ -53,13 +57,13 @@ namespace TRAC
             services.AddScoped<IStaffRepository, StaffRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<IWBSRepository, WBSRepository>();
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbInitializer dbInitializer)
         {
-           
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -70,14 +74,14 @@ namespace TRAC
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-           
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseMiddleware<BlazorCookieLoginMiddleware<IdentityUser>>();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            dbInitializer.Initialize();
+           // dbInitializer.Initialize();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

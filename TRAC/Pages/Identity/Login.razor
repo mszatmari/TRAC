@@ -1,0 +1,104 @@
+﻿@page "/login"
+@attribute [AllowAnonymous]
+@using Microsoft.AspNetCore.Identity
+@using TRAC.IdentityUtils
+@inject SignInManager<IdentityUser> SignInMgr
+@inject UserManager<IdentityUser> UserMgr
+@inject NavigationManager NavMgr
+
+
+
+<EditForm  OnSubmit="@Submit" Model="@Model">
+    <Row Style="justify-content:center">
+        <Column ColumnSize="ColumnSize.Is12.OnMobile.Is6.OnDesktop.Is6.OnTablet">
+            <Card >
+                <CardBody>
+                    <Field>
+                        <FieldBody>
+                            <Addons>
+                                <Addon AddonType="AddonType.Start">
+                                    <AddonLabel> <Icon Name="IconName.User" /></AddonLabel>
+                                </Addon>
+                                <Addon AddonType="AddonType.Body">
+                                    <TextEdit Placeholder="Username" @bind-Text="Model.Login" />
+                                </Addon>
+                            </Addons>
+                        </FieldBody>
+                    </Field>
+
+                    <Field>
+                        <FieldBody>
+                            <Addons>
+                                <Addon AddonType="AddonType.Start">
+                                    <AddonLabel> <Icon Name="IconName.Lock" /></AddonLabel>
+                                </Addon>
+                                <Addon AddonType="AddonType.Body">
+                                    <TextEdit Placeholder="Password" @bind-Text="Model.Password" Role="TextRole.Password">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </Addon>
+                            </Addons>
+                        </FieldBody>
+                    </Field>
+                    <Alert Color="Color.Danger" @bind-Visible="@LoginError">
+                        <AlertDescription>
+                            @LoginMesssage
+                        </AlertDescription>
+                    </Alert>
+                    <Button Float="Float.Right" Type="ButtonType.Submit" Color="Color.Primary">Connect</Button>
+                </CardBody>
+            </Card>
+            </Column>
+        </Row>
+</EditForm>
+
+@code
+{
+    private LoginModel<IdentityUser> Model { get; set; } = new LoginModel<IdentityUser>();
+
+    private bool LoginError { get; set; } = false;
+    private string LoginMesssage { get; set; } = string.Empty;
+
+    private async void Submit()
+    {
+        LoginError = false;
+        LoginMesssage = string.Empty;
+
+        if (string.IsNullOrEmpty(Model.Login) || string.IsNullOrEmpty(Model.Password))
+        {
+            LoginError = true;
+            LoginMesssage = "Login failed.Check your username and password.";
+            return;
+        }
+        var usr = await UserMgr.FindByNameAsync(Model.Login);
+        if (usr == null)
+        {
+            LoginError = true;
+            LoginMesssage = "Login failed.Check your username and password.";
+            return;
+        }
+
+
+        if (await SignInMgr.CanSignInAsync(usr))
+        {
+            var result = await SignInMgr.CheckPasswordSignInAsync(usr, Model.Password, true);
+            if (result.Succeeded)
+            {
+                Guid key = BlazorCookieLoginMiddleware<IdentityUser>.AnnounceLogin(Model);
+                NavMgr.NavigateTo($"/login?key={key}", true);
+            }
+            else
+            {
+                LoginError = true;
+                LoginMesssage = "Login failed.Check your username and password.";
+            }
+        }
+        else
+        {
+            LoginError = true;
+            LoginMesssage = "Your account is blocked";
+        }
+    }
+    }

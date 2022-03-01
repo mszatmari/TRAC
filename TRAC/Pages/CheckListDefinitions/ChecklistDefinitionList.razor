@@ -1,0 +1,67 @@
+﻿@page "/admin-checklist"
+@using TRAC.Business.Repository.IRepository
+@using TRAC.Model
+@inject IChecklistDefinitionRepository ChecklistDefinitionRepository
+@inject NavigationManager NavigationManager
+
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+        <Heading Alignment="TextAlignment.Left" Size="HeadingSize.Is1">Checklists administration</Heading>
+    </Column>
+</Row>
+
+
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12">
+
+        <Table>
+            <TableHeader ThemeContrast="ThemeContrast.Light">
+                <TableRow>
+                    <TableHeaderCell>Name</TableHeaderCell>
+                    <TableHeaderCell>Status</TableHeaderCell>
+                    <TableHeaderCell></TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                @if (ChecklistDefinitions.Any())
+                {
+                    foreach (ChecklistDefinitionDTO checkListDefinition in ChecklistDefinitions)
+                    {
+                        <TableRow>
+                            <TableRowCell>@checkListDefinition.Title</TableRowCell>
+                            <TableRowCell>@checkListDefinition.ChecklistDefinitionStatus.Label</TableRowCell>
+                            <TableRowCell><Button></Button> </TableRowCell>
+                        </TableRow>
+                    }
+                }
+                else
+                {
+                    <TableRow>
+                        <TableRowCell>No records</TableRowCell>
+                    </TableRow>
+                }
+            </TableBody>
+            <TableFooter>
+                <TableRow>
+                    <TableRowCell ColumnSpan="3">
+                        <Button Float="Float.Right" Color="Color.Primary" Type="ButtonType.Link" To="/admin-checklist/create">Add new checklist</Button>
+                    </TableRowCell>
+                </TableRow>
+            </TableFooter>
+        </Table>
+    </Column>
+</Row>
+
+@code
+{
+
+    IEnumerable<ChecklistDefinitionDTO> ChecklistDefinitions { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        ChecklistDefinitions = await ChecklistDefinitionRepository.GetAllWithStatus();
+    }
+
+
+}

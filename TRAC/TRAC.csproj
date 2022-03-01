@@ -16,26 +16,40 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.5">
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.3.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="NuGet.CommandLine" Version="5.8.1">
+    <PackageReference Include="NuGet.CommandLine" Version="5.9.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="log4net" Version="2.0.12" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.7" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3.9" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="0.9.3.9" />
+    <PackageReference Include="Blazorise.Snackbar" Version="0.9.3.9" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Services\IServices\" />
+    <Folder Include="Data\" />
+    <Folder Include="IdentityUtils\" />
+    <Folder Include="wwwroot\Images\" />
+    <Folder Include="Pages\CheckListDefinitions\" />
+    <Folder Include="Pages\Section\" />
+    <Folder Include="Pages\AnswerDefinition\" />
+    <Folder Include="Pages\QuestionDefinition\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Pages\Answer\" />
+    <None Remove="Pages\QuestionDefinition\" />
   </ItemGroup>
 </Project>
